@@ -1,0 +1,71 @@
+### List recipes
+GET http://localhost:8080/v0/recipes
+Accept: application/json
+
+### Get recipe by id
+# Replace the UUID with an id returned from POST /v0/recipes or GET /v0/recipes.
+GET http://localhost:8080/v0/recipes/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### Create sample recipe for retrieval testing
+POST http://localhost:8080/v0/recipes
+Content-Type: application/json
+
+{
+  "title": "Garlic Fried Rice",
+  "description": "Simple garlic rice for breakfast or as a side.",
+  "servingsMin": 2,
+  "servingsMax": 3,
+  "vegetarian": true,
+  "ingredients": [
+    {
+      "ingredientName": "Cooked Rice",
+      "displayText": "3 cups cooked rice",
+      "quantity": 3,
+      "unit": "cups",
+      "preparationNote": "day-old preferred",
+      "optionalIngredient": false,
+      "position": 1
+    },
+    {
+      "ingredientName": "Garlic",
+      "displayText": "6 cloves garlic, minced",
+      "quantity": 6,
+      "unit": "cloves",
+      "preparationNote": "minced",
+      "optionalIngredient": false,
+      "position": 2
+    },
+    {
+      "ingredientName": "Soy Sauce",
+      "displayText": "1 tbsp soy sauce",
+      "quantity": 1,
+      "unit": "tbsp",
+      "preparationNote": null,
+      "optionalIngredient": true,
+      "position": 3
+    }
+  ],
+  "instructions": [
+    {
+      "stepNumber": 1,
+      "instruction": "Cook garlic in oil until golden.",
+      "durationSeconds": 180
+    },
+    {
+      "stepNumber": 2,
+      "instruction": "Add rice and toss until hot.",
+      "durationSeconds": 300
+    },
+    {
+      "stepNumber": 3,
+      "instruction": "Season and serve.",
+      "durationSeconds": 60
+    }
+  ],
+  "tags": [
+    "Breakfast",
+    "Filipino",
+    "Rice"
+  ]
+}

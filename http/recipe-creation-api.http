@@ -1,0 +1,201 @@
+### Create tomato pasta recipe
+POST http://localhost:8080/v0/recipes
+Content-Type: application/json
+
+{
+  "title": "Tomato Pasta",
+  "description": "A simple vegetarian pasta with cherry tomatoes and basil.",
+  "servingsMin": 2,
+  "servingsMax": 4,
+  "vegetarian": true,
+  "ingredients": [
+    {
+      "ingredientName": "  Cherry   Tomatoes  ",
+      "displayText": "2 cups cherry tomatoes, halved",
+      "quantity": 2,
+      "unit": "cups",
+      "preparationNote": "halved",
+      "optionalIngredient": false,
+      "position": 1
+    },
+    {
+      "ingredientName": "Spaghetti",
+      "displayText": "250 g spaghetti",
+      "quantity": 250,
+      "unit": "g",
+      "preparationNote": null,
+      "optionalIngredient": false,
+      "position": 2
+    },
+    {
+      "ingredientName": " Fresh   Basil ",
+      "displayText": "fresh basil leaves",
+      "quantity": null,
+      "unit": null,
+      "preparationNote": "torn",
+      "optionalIngredient": true,
+      "position": 3
+    }
+  ],
+  "instructions": [
+    {
+      "stepNumber": 1,
+      "instruction": "Cook the spaghetti until al dente.",
+      "durationSeconds": 600
+    },
+    {
+      "stepNumber": 2,
+      "instruction": "Simmer tomatoes with olive oil until softened.",
+      "durationSeconds": 480
+    },
+    {
+      "stepNumber": 3,
+      "instruction": "Toss pasta with sauce and finish with basil.",
+      "durationSeconds": 120
+    }
+  ],
+  "tags": [
+    "  Quick   Dinner  ",
+    "Vegetarian",
+    " Pasta "
+  ]
+}
+
+<> 2026-05-16T033704.201.json
+<> 2026-05-16T033636.404.json
+
+### Create chicken adobo recipe
+POST http://localhost:8080/v0/recipes
+Content-Type: application/json
+
+{
+  "title": "Chicken Adobo",
+  "description": "Classic Filipino chicken braised in soy sauce, vinegar, garlic, and bay leaves.",
+  "servingsMin": 4,
+  "servingsMax": 6,
+  "vegetarian": false,
+  "ingredients": [
+    {
+      "ingredientName": "Chicken Thighs",
+      "displayText": "1 kg chicken thighs",
+      "quantity": 1,
+      "unit": "kg",
+      "preparationNote": "bone-in",
+      "optionalIngredient": false,
+      "position": 1
+    },
+    {
+      "ingredientName": "  Soy   Sauce ",
+      "displayText": "1/2 cup soy sauce",
+      "quantity": 0.5,
+      "unit": "cup",
+      "preparationNote": null,
+      "optionalIngredient": false,
+      "position": 2
+    },
+    {
+      "ingredientName": "White Vinegar",
+      "displayText": "1/2 cup white vinegar",
+      "quantity": 0.5,
+      "unit": "cup",
+      "preparationNote": null,
+      "optionalIngredient": false,
+      "position": 3
+    },
+    {
+      "ingredientName": "Garlic",
+      "displayText": "6 cloves garlic, crushed",
+      "quantity": 6,
+      "unit": "cloves",
+      "preparationNote": "crushed",
+      "optionalIngredient": false,
+      "position": 4
+    },
+    {
+      "ingredientName": "Bay Leaves",
+      "displayText": "3 bay leaves",
+      "quantity": 3,
+      "unit": "pieces",
+      "preparationNote": null,
+      "optionalIngredient": false,
+      "position": 5
+    }
+  ],
+  "instructions": [
+    {
+      "stepNumber": 1,
+      "instruction": "Combine chicken, soy sauce, vinegar, garlic, and bay leaves in a pot.",
+      "durationSeconds": 300
+    },
+    {
+      "stepNumber": 2,
+      "instruction": "Simmer until the chicken is tender and the sauce is reduced.",
+      "durationSeconds": 2400
+    },
+    {
+      "stepNumber": 3,
+      "instruction": "Serve hot with steamed rice.",
+      "durationSeconds": 60
+    }
+  ],
+  "tags": [
+    "Filipino",
+    "Dinner",
+    "Comfort Food"
+  ]
+}
+
+### Create recipe with omitted ingredient positions
+POST http://localhost:8080/v0/recipes
+Content-Type: application/json
+
+{
+  "title": "Avocado Toast",
+  "description": "Fast breakfast toast with avocado and lemon.",
+  "servingsMin": 1,
+  "servingsMax": 1,
+  "vegetarian": true,
+  "ingredients": [
+    {
+      "ingredientName": "Sourdough Bread",
+      "displayText": "1 slice sourdough bread",
+      "quantity": 1,
+      "unit": "slice",
+      "preparationNote": "toasted",
+      "optionalIngredient": false
+    },
+    {
+      "ingredientName": "Avocado",
+      "displayText": "1 ripe avocado",
+      "quantity": 1,
+      "unit": "piece",
+      "preparationNote": "mashed",
+      "optionalIngredient": false
+    },
+    {
+      "ingredientName": "Lemon Juice",
+      "displayText": "1 tsp lemon juice",
+      "quantity": 1,
+      "unit": "tsp",
+      "preparationNote": null,
+      "optionalIngredient": false
+    }
+  ],
+  "instructions": [
+    {
+      "stepNumber": 1,
+      "instruction": "Toast the bread.",
+      "durationSeconds": 180
+    },
+    {
+      "stepNumber": 2,
+      "instruction": "Mash avocado with lemon juice and spread over toast.",
+      "durationSeconds": 120
+    }
+  ],
+  "tags": [
+    "Breakfast",
+    "Quick",
+    "Vegetarian"
+  ]
+}
