@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: recipe-api-postgres
+    environment:
+      POSTGRES_DB: recipe_api
+      POSTGRES_USER: recipe_user
+      POSTGRES_PASSWORD: recipe_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - recipe-api-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  recipe-api-postgres-data:
