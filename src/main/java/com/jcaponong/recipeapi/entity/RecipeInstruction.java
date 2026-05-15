@@ -30,6 +30,10 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecipeInstruction {
 
+    public static RecipeInstruction create() {
+        return new RecipeInstruction();
+    }
+
     @Id
     @GeneratedValue
     @UuidGenerator

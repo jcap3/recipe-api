@@ -8,7 +8,7 @@ public record RecipeIngredientRequest(
         BigDecimal quantity,
         String unit,
         String preparationNote,
-        Boolean optionalIngredient,
+        Boolean isOptionalIngredient,
         Integer position
 ) {
 }

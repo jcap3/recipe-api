@@ -28,6 +28,10 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
+    public static Tag create() {
+        return new Tag();
+    }
+
     @Id
     @GeneratedValue
     @UuidGenerator
