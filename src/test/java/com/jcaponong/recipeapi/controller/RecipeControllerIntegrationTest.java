@@ -189,11 +189,31 @@ class RecipeControllerIntegrationTest {
 
         mockMvc.perform(get("/v0/recipes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(recipeId))
-                .andExpect(jsonPath("$[0].title").value("Tomato Pasta"))
-                .andExpect(jsonPath("$[0].ingredients[0].ingredientName").value("cherry tomatoes"))
-                .andExpect(jsonPath("$[0].instructions[0].instruction").value("Cook the pasta."))
-                .andExpect(jsonPath("$[0].tags[0].name").value("quick dinner"));
+                .andExpect(jsonPath("$.content[0].id").value(recipeId))
+                .andExpect(jsonPath("$.content[0].title").value("Tomato Pasta"))
+                .andExpect(jsonPath("$.content[0].ingredients[0].ingredientName").value("cherry tomatoes"))
+                .andExpect(jsonPath("$.content[0].instructions[0].instruction").value("Cook the pasta."))
+                .andExpect(jsonPath("$.content[0].tags[0].name").value("quick dinner"))
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.size").value(20))
+                .andExpect(jsonPath("$.number").value(0));
+    }
+
+    @Test
+    void shouldPageRecipesIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes")
+                        .param("page", "1")
+                        .param("size", "2")
+                        .param("sort", "title,asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].title").value("Mushroom Tomato Soup"))
+                .andExpect(jsonPath("$.content[1].title").value("Tomato Basil Pasta"))
+                .andExpect(jsonPath("$.totalElements").value(4))
+                .andExpect(jsonPath("$.size").value(2))
+                .andExpect(jsonPath("$.number").value(1));
     }
 
     @Test
@@ -203,12 +223,13 @@ class RecipeControllerIntegrationTest {
         mockMvc.perform(get("/v0/recipes/search")
                         .param("vegetarian", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.content[*].title", containsInAnyOrder(
                         "Tomato Basil Pasta",
                         "Mushroom Tomato Soup",
                         "Carrot Rice"
-                )));
+                )))
+                .andExpect(jsonPath("$.totalElements").value(3));
     }
 
     @Test
@@ -218,8 +239,8 @@ class RecipeControllerIntegrationTest {
         mockMvc.perform(get("/v0/recipes/search")
                         .param("servings", "2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[*].title", containsInAnyOrder(
                         "Chicken Tomato Stew",
                         "Carrot Rice"
                 )));
@@ -232,8 +253,8 @@ class RecipeControllerIntegrationTest {
         mockMvc.perform(get("/v0/recipes/search")
                         .param("includeIngredients", "tomato,basil"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title").value("Tomato Basil Pasta"));
     }
 
     @Test
@@ -243,8 +264,8 @@ class RecipeControllerIntegrationTest {
         mockMvc.perform(get("/v0/recipes/search")
                         .param("excludeIngredients", "chicken"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.content[*].title", containsInAnyOrder(
                         "Tomato Basil Pasta",
                         "Mushroom Tomato Soup",
                         "Carrot Rice"
@@ -258,8 +279,8 @@ class RecipeControllerIntegrationTest {
         mockMvc.perform(get("/v0/recipes/search")
                         .param("instructionContains", "boil"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title").value("Tomato Basil Pasta"));
     }
 
     @Test
@@ -272,8 +293,8 @@ class RecipeControllerIntegrationTest {
                         .param("includeIngredients", " tomato ")
                         .param("excludeIngredients", "mushroom"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title").value("Tomato Basil Pasta"));
     }
 
     @Test

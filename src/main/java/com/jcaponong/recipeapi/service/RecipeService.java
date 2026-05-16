@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,10 +55,9 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeResponse> getRecipes() {
-        return recipeRepository.findAllByDeletedAtIsNull().stream()
-                .map(recipeMapper::toResponse)
-                .toList();
+    public Page<RecipeResponse> getRecipes(Pageable pageable) {
+        return recipeRepository.findAllByDeletedAtIsNull(pageable)
+                .map(recipeMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -67,12 +68,13 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeResponse> searchRecipes(
+    public Page<RecipeResponse> searchRecipes(
             Boolean vegetarian,
             Integer servings,
             List<String> includeIngredients,
             List<String> excludeIngredients,
-            String instructionContains
+            String instructionContains,
+            Pageable pageable
     ) {
         Specification<Recipe> specification = RecipeSpecification.notDeleted();
 
@@ -92,9 +94,8 @@ public class RecipeService {
             specification = specification.and(RecipeSpecification.instructionContains(instructionContains));
         }
 
-        return recipeRepository.findAll(specification).stream()
-                .map(recipeMapper::toResponse)
-                .toList();
+        return recipeRepository.findAll(specification, pageable)
+                .map(recipeMapper::toResponse);
     }
 
     @Transactional

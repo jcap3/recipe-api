@@ -9,8 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,24 +39,28 @@ public class RecipeController {
     }
 
     @GetMapping
-    public List<RecipeResponse> getRecipes() {
-        return recipeService.getRecipes();
+    public Page<RecipeResponse> getRecipes(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return recipeService.getRecipes(pageable);
     }
 
     @GetMapping("/search")
-    public List<RecipeResponse> searchRecipes(
+    public Page<RecipeResponse> searchRecipes(
             @RequestParam(required = false) Boolean vegetarian,
             @RequestParam(required = false) Integer servings,
             @RequestParam(required = false) String includeIngredients,
             @RequestParam(required = false) String excludeIngredients,
-            @RequestParam(required = false) String instructionContains
+            @RequestParam(required = false) String instructionContains,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return recipeService.searchRecipes(
                 vegetarian,
                 servings,
                 parseCommaSeparated(includeIngredients),
                 parseCommaSeparated(excludeIngredients),
-                instructionContains
+                instructionContains,
+                pageable
         );
     }
 
