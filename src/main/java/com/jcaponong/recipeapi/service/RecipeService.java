@@ -4,6 +4,7 @@ import com.jcaponong.recipeapi.dto.RecipeCreateRequest;
 import com.jcaponong.recipeapi.dto.RecipeIngredientRequest;
 import com.jcaponong.recipeapi.dto.RecipeInstructionRequest;
 import com.jcaponong.recipeapi.dto.RecipeResponse;
+import com.jcaponong.recipeapi.dto.RecipeUpdateRequest;
 import com.jcaponong.recipeapi.entity.Ingredient;
 import com.jcaponong.recipeapi.entity.Recipe;
 import com.jcaponong.recipeapi.entity.RecipeIngredient;
@@ -14,6 +15,7 @@ import com.jcaponong.recipeapi.mapper.RecipeMapper;
 import com.jcaponong.recipeapi.repository.IngredientRepository;
 import com.jcaponong.recipeapi.repository.RecipeRepository;
 import com.jcaponong.recipeapi.repository.TagRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -58,6 +60,38 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return recipeMapper.toResponse(recipe);
+    }
+
+    @Transactional
+    public RecipeResponse updateRecipe(UUID id, RecipeUpdateRequest request) {
+        Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        recipe.setTitle(request.title());
+        recipe.setDescription(request.description());
+        recipe.setServingsMin(request.servingsMin());
+        recipe.setServingsMax(request.servingsMax());
+        recipe.setVegetarian(Boolean.TRUE.equals(request.vegetarian()));
+
+        recipe.getRecipeIngredients().clear();
+        recipe.getInstructions().clear();
+        recipe.getTags().clear();
+        recipeRepository.flush();
+
+        addIngredients(recipe, request.ingredients());
+        addInstructions(recipe, request.instructions());
+        addTags(recipe, request.tags());
+
+        Recipe savedRecipe = recipeRepository.save(recipe);
+        return recipeMapper.toResponse(savedRecipe);
+    }
+
+    @Transactional
+    public void deleteRecipe(UUID id) {
+        Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        recipe.setDeletedAt(Instant.now());
+        recipeRepository.save(recipe);
     }
 
     private void addIngredients(Recipe recipe, List<RecipeIngredientRequest> ingredientRequests) {

@@ -2,15 +2,18 @@ package com.jcaponong.recipeapi.controller;
 
 import com.jcaponong.recipeapi.dto.RecipeCreateRequest;
 import com.jcaponong.recipeapi.dto.RecipeResponse;
+import com.jcaponong.recipeapi.dto.RecipeUpdateRequest;
 import com.jcaponong.recipeapi.service.RecipeService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +38,19 @@ public class RecipeController {
     @GetMapping("/{id}")
     public RecipeResponse getRecipe(@PathVariable UUID id) {
         return recipeService.getRecipe(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RecipeResponse> updateRecipe(
+            @PathVariable UUID id,
+            @RequestBody RecipeUpdateRequest request
+    ) {
+        return ResponseEntity.ok(recipeService.updateRecipe(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecipe(@PathVariable UUID id) {
+        recipeService.deleteRecipe(id);
+        return ResponseEntity.noContent().build();
     }
 }
