@@ -51,7 +51,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldCreateRecipe() throws Exception {
+    void shouldCreateRecipeIT() throws Exception {
         mockMvc.perform(post("/v0/recipes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tomatoPastaRequest()))
@@ -71,7 +71,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldGetRecipeById() throws Exception {
+    void shouldGetRecipeByIdIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
         mockMvc.perform(get("/v0/recipes/{id}", recipeId))
@@ -84,7 +84,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldListRecipes() throws Exception {
+    void shouldListRecipesIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
         mockMvc.perform(get("/v0/recipes"))
@@ -97,7 +97,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldUpdateRecipe() throws Exception {
+    void shouldUpdateRecipeIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
         mockMvc.perform(put("/v0/recipes/{id}", recipeId)
@@ -122,7 +122,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldDeleteRecipe() throws Exception {
+    void shouldDeleteRecipeIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
         mockMvc.perform(delete("/v0/recipes/{id}", recipeId))
@@ -132,7 +132,7 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
-    void shouldNotReturnDeletedRecipeById() throws Exception {
+    void shouldNotReturnDeletedRecipeByIdIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
         mockMvc.perform(delete("/v0/recipes/{id}", recipeId))

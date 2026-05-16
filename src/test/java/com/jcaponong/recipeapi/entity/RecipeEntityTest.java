@@ -15,7 +15,7 @@ class RecipeEntityTest {
     private TestEntityManager entityManager;
 
     @Test
-    void shouldPersistRecipe() {
+    void shouldPersistRecipeTest() {
         Recipe recipe = new Recipe();
         recipe.setTitle("Tomato Pasta");
         recipe.setDescription("Simple pasta");
