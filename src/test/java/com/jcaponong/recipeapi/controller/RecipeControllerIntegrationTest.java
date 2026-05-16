@@ -73,6 +73,104 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
+    void shouldRejectCreateRecipeWithBlankTitleIT() throws Exception {
+        mockMvc.perform(post("/v0/recipes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": " ",
+                                  "description": "Simple pasta",
+                                  "servingsMin": 2,
+                                  "servingsMax": 4,
+                                  "vegetarian": true,
+                                  "ingredients": [
+                                    {
+                                      "ingredientName": "Cherry Tomatoes",
+                                      "displayText": "2 cups cherry tomatoes",
+                                      "quantity": 2,
+                                      "unit": "cups",
+                                      "preparationNote": "halved",
+                                      "optionalIngredient": false,
+                                      "position": 1
+                                    }
+                                  ],
+                                  "instructions": [
+                                    {
+                                      "stepNumber": 1,
+                                      "instruction": "Cook the pasta.",
+                                      "durationSeconds": 600
+                                    }
+                                  ],
+                                  "tags": ["Quick Dinner"]
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.path").value("/v0/recipes"))
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("title")));
+    }
+
+    @Test
+    void shouldRejectCreateRecipeWithInvalidServingsIT() throws Exception {
+        mockMvc.perform(post("/v0/recipes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "Tomato Pasta",
+                                  "description": "Simple pasta",
+                                  "servingsMin": 4,
+                                  "servingsMax": 2,
+                                  "vegetarian": true,
+                                  "ingredients": [
+                                    {
+                                      "ingredientName": "Cherry Tomatoes",
+                                      "displayText": "2 cups cherry tomatoes",
+                                      "quantity": 2,
+                                      "unit": "cups",
+                                      "preparationNote": "halved",
+                                      "optionalIngredient": false,
+                                      "position": 1
+                                    }
+                                  ],
+                                  "instructions": [
+                                    {
+                                      "stepNumber": 1,
+                                      "instruction": "Cook the pasta.",
+                                      "durationSeconds": 600
+                                    }
+                                  ],
+                                  "tags": ["Quick Dinner"]
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString(
+                        "servingsMax must be greater than or equal to servingsMin"
+                )));
+    }
+
+    @Test
+    void shouldRejectCreateRecipeWithMissingIngredientsAndInstructionsIT() throws Exception {
+        mockMvc.perform(post("/v0/recipes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "Tomato Pasta",
+                                  "description": "Simple pasta",
+                                  "servingsMin": 2,
+                                  "servingsMax": 4,
+                                  "vegetarian": true,
+                                  "tags": ["Quick Dinner"]
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("ingredients")))
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("instructions")));
+    }
+
+    @Test
     void shouldGetRecipeByIdIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 

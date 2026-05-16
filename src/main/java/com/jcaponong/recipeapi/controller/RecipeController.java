@@ -3,6 +3,7 @@ package com.jcaponong.recipeapi.controller;
 import com.jcaponong.recipeapi.dto.RecipeCreateRequest;
 import com.jcaponong.recipeapi.dto.RecipeResponse;
 import com.jcaponong.recipeapi.dto.RecipeUpdateRequest;
+import jakarta.validation.Valid;
 import com.jcaponong.recipeapi.service.RecipeService;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,7 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @PostMapping
-    public ResponseEntity<RecipeResponse> createRecipe(@RequestBody RecipeCreateRequest request) {
+    public ResponseEntity<RecipeResponse> createRecipe(@Valid @RequestBody RecipeCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.createRecipe(request));
     }
 
@@ -63,7 +64,7 @@ public class RecipeController {
     @PutMapping("/{id}")
     public ResponseEntity<RecipeResponse> updateRecipe(
             @PathVariable UUID id,
-            @RequestBody RecipeUpdateRequest request
+            @Valid @RequestBody RecipeUpdateRequest request
     ) {
         return ResponseEntity.ok(recipeService.updateRecipe(id, request));
     }
