@@ -61,9 +61,6 @@ Content-Type: application/json
   ]
 }
 
-<> 2026-05-16T033704.201.json
-<> 2026-05-16T033636.404.json
-
 ### Create chicken adobo recipe
 POST http://localhost:8080/v0/recipes
 Content-Type: application/json
@@ -145,7 +142,7 @@ Content-Type: application/json
   ]
 }
 
-### Create recipe with omitted ingredient positions
+### Create avocado toast recipe
 POST http://localhost:8080/v0/recipes
 Content-Type: application/json
 
@@ -162,7 +159,8 @@ Content-Type: application/json
       "quantity": 1,
       "unit": "slice",
       "preparationNote": "toasted",
-      "optionalIngredient": false
+      "optionalIngredient": false,
+      "position": 1
     },
     {
       "ingredientName": "Avocado",
@@ -170,7 +168,8 @@ Content-Type: application/json
       "quantity": 1,
       "unit": "piece",
       "preparationNote": "mashed",
-      "optionalIngredient": false
+      "optionalIngredient": false,
+      "position": 2
     },
     {
       "ingredientName": "Lemon Juice",
@@ -178,7 +177,8 @@ Content-Type: application/json
       "quantity": 1,
       "unit": "tsp",
       "preparationNote": null,
-      "optionalIngredient": false
+      "optionalIngredient": false,
+      "position": 3
     }
   ],
   "instructions": [

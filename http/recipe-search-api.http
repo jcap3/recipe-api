@@ -1,0 +1,23 @@
+### Search vegetarian recipes
+GET http://localhost:8080/v0/recipes/search?vegetarian=true
+Accept: application/json
+
+### Search recipes that serve 4 people
+GET http://localhost:8080/v0/recipes/search?servings=4
+Accept: application/json
+
+### Search recipes including tomato and basil
+GET http://localhost:8080/v0/recipes/search?includeIngredients=tomato,basil
+Accept: application/json
+
+### Search recipes excluding chicken
+GET http://localhost:8080/v0/recipes/search?excludeIngredients=chicken
+Accept: application/json
+
+### Search recipes with instruction text
+GET http://localhost:8080/v0/recipes/search?instructionContains=boil
+Accept: application/json
+
+### Search recipes with combined filters
+GET http://localhost:8080/v0/recipes/search?vegetarian=true&servings=4&includeIngredients=tomato&excludeIngredients=mushroom
+Accept: application/json

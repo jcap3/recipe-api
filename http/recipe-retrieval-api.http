@@ -7,16 +7,17 @@ Accept: application/json
 GET http://localhost:8080/v0/recipes/00000000-0000-0000-0000-000000000000
 Accept: application/json
 
-### Create sample recipe for retrieval testing
-POST http://localhost:8080/v0/recipes
+### Update recipe by id
+# Replace the UUID with an id returned from POST /v0/recipes or GET /v0/recipes.
+PUT http://localhost:8080/v0/recipes/00000000-0000-0000-0000-000000000000
 Content-Type: application/json
 
 {
-  "title": "Garlic Fried Rice",
-  "description": "Simple garlic rice for breakfast or as a side.",
+  "title": "Garlic Fried Rice with Egg",
+  "description": "Simple garlic rice with egg for breakfast or as a side.",
   "servingsMin": 2,
   "servingsMax": 3,
-  "vegetarian": true,
+  "vegetarian": false,
   "ingredients": [
     {
       "ingredientName": "Cooked Rice",
@@ -44,6 +45,15 @@ Content-Type: application/json
       "preparationNote": null,
       "optionalIngredient": true,
       "position": 3
+    },
+    {
+      "ingredientName": "Egg",
+      "displayText": "2 eggs, beaten",
+      "quantity": 2,
+      "unit": "pieces",
+      "preparationNote": "beaten",
+      "optionalIngredient": false,
+      "position": 4
     }
   ],
   "instructions": [
@@ -54,7 +64,7 @@ Content-Type: application/json
     },
     {
       "stepNumber": 2,
-      "instruction": "Add rice and toss until hot.",
+      "instruction": "Add rice and toss until hot, then stir in the beaten eggs.",
       "durationSeconds": 300
     },
     {
@@ -69,3 +79,7 @@ Content-Type: application/json
     "Rice"
   ]
 }
+
+### Delete recipe by id
+# Replace the UUID with an id returned from POST /v0/recipes or GET /v0/recipes.
+DELETE http://localhost:8080/v0/recipes/00000000-0000-0000-0000-000000000000
