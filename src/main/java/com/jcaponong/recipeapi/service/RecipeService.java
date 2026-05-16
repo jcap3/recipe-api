@@ -15,18 +15,22 @@ import com.jcaponong.recipeapi.mapper.RecipeMapper;
 import com.jcaponong.recipeapi.repository.IngredientRepository;
 import com.jcaponong.recipeapi.repository.RecipeRepository;
 import com.jcaponong.recipeapi.repository.TagRepository;
+import com.jcaponong.recipeapi.specification.RecipeSpecification;
 import java.time.Instant;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
+
+import static com.jcaponong.recipeapi.util.NameNormalizer.normalizeName;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +64,37 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return recipeMapper.toResponse(recipe);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecipeResponse> searchRecipes(
+            Boolean vegetarian,
+            Integer servings,
+            List<String> includeIngredients,
+            List<String> excludeIngredients,
+            String instructionContains
+    ) {
+        Specification<Recipe> specification = RecipeSpecification.notDeleted();
+
+        if (!ObjectUtils.isEmpty(vegetarian)) {
+            specification = specification.and(RecipeSpecification.hasVegetarian(vegetarian));
+        }
+        if (!ObjectUtils.isEmpty(servings)) {
+            specification = specification.and(RecipeSpecification.hasServings(servings));
+        }
+        if (!CollectionUtils.isEmpty(includeIngredients)) {
+            specification = specification.and(RecipeSpecification.includesIngredients(includeIngredients));
+        }
+        if (!CollectionUtils.isEmpty(excludeIngredients)) {
+            specification = specification.and(RecipeSpecification.excludesIngredients(excludeIngredients));
+        }
+        if (StringUtils.hasText(instructionContains)) {
+            specification = specification.and(RecipeSpecification.instructionContains(instructionContains));
+        }
+
+        return recipeRepository.findAll(specification).stream()
+                .map(recipeMapper::toResponse)
+                .toList();
     }
 
     @Transactional
@@ -164,7 +199,4 @@ public class RecipeService {
         return tagRepository.save(tag);
     }
 
-    private String normalizeName(String name) {
-        return name.trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
-    }
 }

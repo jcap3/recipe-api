@@ -1,6 +1,8 @@
 package com.jcaponong.recipeapi.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -97,6 +99,86 @@ class RecipeControllerIntegrationTest {
     }
 
     @Test
+    void shouldSearchRecipesByVegetarianIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("vegetarian", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                        "Tomato Basil Pasta",
+                        "Mushroom Tomato Soup",
+                        "Carrot Rice"
+                )));
+    }
+
+    @Test
+    void shouldSearchRecipesByServingsIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("servings", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                        "Chicken Tomato Stew",
+                        "Carrot Rice"
+                )));
+    }
+
+    @Test
+    void shouldSearchRecipesByIncludedIngredientsIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("includeIngredients", "tomato,basil"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+    }
+
+    @Test
+    void shouldSearchRecipesByExcludedIngredientsIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("excludeIngredients", "chicken"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[*].title", containsInAnyOrder(
+                        "Tomato Basil Pasta",
+                        "Mushroom Tomato Soup",
+                        "Carrot Rice"
+                )));
+    }
+
+    @Test
+    void shouldSearchRecipesByInstructionContainsIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("instructionContains", "boil"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+    }
+
+    @Test
+    void shouldSearchRecipesByCombinedFiltersIT() throws Exception {
+        createSearchRecipes();
+
+        mockMvc.perform(get("/v0/recipes/search")
+                        .param("vegetarian", "true")
+                        .param("servings", "4")
+                        .param("includeIngredients", " tomato ")
+                        .param("excludeIngredients", "mushroom"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title").value("Tomato Basil Pasta"));
+    }
+
+    @Test
     void shouldUpdateRecipeIT() throws Exception {
         String recipeId = createRecipe(tomatoPastaRequest());
 
@@ -153,6 +235,13 @@ class RecipeControllerIntegrationTest {
 
         JsonNode response = objectMapper.readTree(responseBody);
         return response.get("id").asText();
+    }
+
+    private void createSearchRecipes() throws Exception {
+        createRecipe(tomatoBasilPastaRequest());
+        createRecipe(chickenTomatoStewRequest());
+        createRecipe(mushroomTomatoSoupRequest());
+        createRecipe(carrotRiceRequest());
     }
 
     private String tomatoPastaRequest() {
@@ -213,6 +302,157 @@ class RecipeControllerIntegrationTest {
                     }
                   ],
                   "tags": [" Comfort   Food "]
+                }
+                """;
+    }
+
+    private String tomatoBasilPastaRequest() {
+        return """
+                {
+                  "title": "Tomato Basil Pasta",
+                  "description": "Pasta with herbs",
+                  "servingsMin": 4,
+                  "servingsMax": 4,
+                  "vegetarian": true,
+                  "ingredients": [
+                    {
+                      "ingredientName": "Tomato",
+                      "displayText": "2 tomatoes",
+                      "quantity": 2,
+                      "unit": "pieces",
+                      "preparationNote": "diced",
+                      "optionalIngredient": false,
+                      "position": 1
+                    },
+                    {
+                      "ingredientName": "Basil",
+                      "displayText": "1 cup basil",
+                      "quantity": 1,
+                      "unit": "cup",
+                      "preparationNote": "torn",
+                      "optionalIngredient": false,
+                      "position": 2
+                    }
+                  ],
+                  "instructions": [
+                    {
+                      "stepNumber": 1,
+                      "instruction": "Boil pasta until al dente.",
+                      "durationSeconds": 600
+                    }
+                  ],
+                  "tags": ["Dinner"]
+                }
+                """;
+    }
+
+    private String chickenTomatoStewRequest() {
+        return """
+                {
+                  "title": "Chicken Tomato Stew",
+                  "description": "Savory stew",
+                  "servingsMin": 2,
+                  "servingsMax": 4,
+                  "vegetarian": false,
+                  "ingredients": [
+                    {
+                      "ingredientName": "Chicken",
+                      "displayText": "500g chicken",
+                      "quantity": 500,
+                      "unit": "g",
+                      "preparationNote": "cubed",
+                      "optionalIngredient": false,
+                      "position": 1
+                    },
+                    {
+                      "ingredientName": "Tomato",
+                      "displayText": "3 tomatoes",
+                      "quantity": 3,
+                      "unit": "pieces",
+                      "preparationNote": "crushed",
+                      "optionalIngredient": false,
+                      "position": 2
+                    }
+                  ],
+                  "instructions": [
+                    {
+                      "stepNumber": 1,
+                      "instruction": "Simmer chicken with tomatoes.",
+                      "durationSeconds": 1800
+                    }
+                  ],
+                  "tags": ["Stew"]
+                }
+                """;
+    }
+
+    private String mushroomTomatoSoupRequest() {
+        return """
+                {
+                  "title": "Mushroom Tomato Soup",
+                  "description": "Vegetarian soup",
+                  "servingsMin": 4,
+                  "servingsMax": 6,
+                  "vegetarian": true,
+                  "ingredients": [
+                    {
+                      "ingredientName": "Mushroom",
+                      "displayText": "2 cups mushrooms",
+                      "quantity": 2,
+                      "unit": "cups",
+                      "preparationNote": "sliced",
+                      "optionalIngredient": false,
+                      "position": 1
+                    },
+                    {
+                      "ingredientName": "Tomato",
+                      "displayText": "2 tomatoes",
+                      "quantity": 2,
+                      "unit": "pieces",
+                      "preparationNote": "diced",
+                      "optionalIngredient": false,
+                      "position": 2
+                    }
+                  ],
+                  "instructions": [
+                    {
+                      "stepNumber": 1,
+                      "instruction": "Blend soup until smooth.",
+                      "durationSeconds": 900
+                    }
+                  ],
+                  "tags": ["Soup"]
+                }
+                """;
+    }
+
+    private String carrotRiceRequest() {
+        return """
+                {
+                  "title": "Carrot Rice",
+                  "description": "Simple rice",
+                  "servingsMin": 1,
+                  "servingsMax": 2,
+                  "vegetarian": true,
+                  "ingredients": [
+                    {
+                      "ingredientName": "Carrot",
+                      "displayText": "1 carrot",
+                      "quantity": 1,
+                      "unit": "piece",
+                      "preparationNote": "grated",
+                      "optionalIngredient": false,
+                      "position": 1
+                    }
+                  ],
+                  "instructions": [
+                    {
+                      "stepNumber": 1,
+                      "instruction": "Steam rice with carrot.",
+                      "durationSeconds": 1200
+                    }
+                  ],
+                  "tags": ["Rice"]
                 }
                 """;
     }
