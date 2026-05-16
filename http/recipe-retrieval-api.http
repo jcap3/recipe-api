@@ -2,6 +2,10 @@
 GET http://localhost:8080/v0/recipes
 Accept: application/json
 
+### List recipes with pagination
+GET http://localhost:8080/v0/recipes?page=0&size=10&sort=createdAt,desc
+Accept: application/json
+
 ### Get recipe by id
 # Replace the UUID with an id returned from POST /v0/recipes or GET /v0/recipes.
 GET http://localhost:8080/v0/recipes/00000000-0000-0000-0000-000000000000

@@ -21,3 +21,7 @@ Accept: application/json
 ### Search recipes with combined filters
 GET http://localhost:8080/v0/recipes/search?vegetarian=true&servings=4&includeIngredients=tomato&excludeIngredients=mushroom
 Accept: application/json
+
+### Search recipes with pagination
+GET http://localhost:8080/v0/recipes/search?vegetarian=true&page=0&size=10&sort=title,asc
+Accept: application/json

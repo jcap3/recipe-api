@@ -65,13 +65,21 @@ Base path: `/v0/recipes`
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | `POST` | `/v0/recipes` | Create a recipe |
-| `GET` | `/v0/recipes` | List active recipes |
+| `GET` | `/v0/recipes` | List active recipes with pagination |
 | `GET` | `/v0/recipes/{id}` | Get a recipe by ID |
 | `PUT` | `/v0/recipes/{id}` | Update a recipe |
 | `DELETE` | `/v0/recipes/{id}` | Soft delete a recipe |
-| `GET` | `/v0/recipes/search` | Search recipes with optional filters |
+| `GET` | `/v0/recipes/search` | Search recipes with optional filters and pagination |
 
 Manual request examples are available in the [`http/`](http/) directory and can be run from IntelliJ IDEA or any compatible HTTP client.
+
+`GET /v0/recipes` and `GET /v0/recipes/search` accept Spring pagination parameters:
+
+| Parameter | Description |
+| --- | --- |
+| `page` | Zero-based page number. Defaults to `0` |
+| `size` | Page size. Defaults to `20` |
+| `sort` | Sort field and direction, for example `createdAt,desc` or `title,asc` |
 
 ### Search Query Parameters
 
@@ -170,10 +178,12 @@ GET /v0/recipes/search?includeIngredients=tomato,basil
 GET /v0/recipes/search?excludeIngredients=chicken
 GET /v0/recipes/search?instructionContains=boil
 GET /v0/recipes/search?vegetarian=true&servings=4&includeIngredients=tomato&excludeIngredients=mushroom
+GET /v0/recipes/search?vegetarian=true&page=0&size=10&sort=title,asc
 ```
 
 ## Assumptions and Design Decisions
 
+- Authentication and authorization are out of scope for this recipe API challenge.
 - Recipes contain ordered ingredients and ordered instruction steps.
 - Ingredients are normalized into a separate table to support include and exclude ingredient filtering.
 - `recipe_ingredients.displayText` preserves the original user-entered ingredient text.
@@ -183,6 +193,8 @@ GET /v0/recipes/search?vegetarian=true&servings=4&includeIngredients=tomato&excl
 - Search is implemented using Spring Data JPA Specifications to dynamically compose optional filters.
 - Specifications improve maintainability and code scalability; database scalability is addressed through indexing and schema design.
 - Hibernate uses `ddl-auto=create-drop` for challenge simplicity.
+- Docker keeps PostgreSQL data in a persistent volume. If you need to fully reset local database state, run `docker compose down -v` before starting it again.
 - In production, schema migrations would be managed using Flyway or Liquibase.
 - Request DTOs use Jakarta Bean Validation.
 - Validation and application errors are returned as structured JSON responses.
+- Concurrent requests creating the same normalized ingredient or tag rely on database uniqueness constraints. A production implementation could add a retry or database upsert around that lookup/create path.
