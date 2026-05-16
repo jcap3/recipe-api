@@ -10,7 +10,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import java.util.List;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import java.util.Locale;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -88,11 +88,10 @@ public final class RecipeSpecification {
     public static Specification<Recipe> instructionContains(String text) {
         return (root, query, criteriaBuilder) -> {
             query.distinct(true);
-            HibernateCriteriaBuilder hibernateCriteriaBuilder = (HibernateCriteriaBuilder) criteriaBuilder;
             Join<Recipe, RecipeInstruction> instruction = root.join("instructions");
-            return hibernateCriteriaBuilder.ilike(
-                    instruction.get("instruction"),
-                    "%" + text.trim() + "%"
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(instruction.get("instruction").as(String.class)),
+                    "%" + text.trim().toLowerCase(Locale.ROOT) + "%"
             );
         };
     }
